@@ -1,152 +1,203 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const LandingPage: React.FC = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center py-4 px-6 md:px-12 bg-transparent backdrop-blur-md fixed top-0 left-0 right-0 z-50">
-        <div className="font-bold text-2xl">
-          <Link href="/">Indie-Starter Kit</Link>
-        </div>
+    <div className="flex flex-col min-h-screen relative">
+      {/* Background Elements */}
+      <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
+        <Image
+          src="/land-page.svg" 
+          alt="Landing Page Background"
+          fill
+          priority
+          className="object-contain md:object-cover w-full"
+          sizes="100vw"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectPosition: 'center top'
+          }}
+        />
+        
+        {/* Animated Blob Shapes */}
+        <motion.div 
+          className="absolute top-1/4 left-1/3 w-96 h-96 rounded-full bg-blue-400/20 blur-3xl"
+          animate={{ 
+            x: [0, 30, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-1/3 right-1/4 w-72 h-72 rounded-full bg-amber-400/20 blur-3xl"
+          animate={{ 
+            x: [0, -20, 0],
+            y: [0, 20, 0],
+          }}
+          transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 2 }}
+        />
+      </div>
+      
+      {/* Enhanced Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-100/60 via-blue-300/30 to-blue-400/40 z-10"></div>
+
+      {/* Non-Sticky Navbar */}
+      <motion.nav 
+        className={`flex justify-between items-center py-4 px-6 md:px-12 relative z-50 transition-all duration-300`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div 
+          className="font-bold text-2xl"
+          whileHover={{ scale: 1.05 }}
+        >
+          <Link href="/" className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-amber-600">
+            <Image src="/logo.svg" alt="Logo" width={250} height={100} className="inline-block mr-2" />
+          </Link>
+        </motion.div>
         
         <div className="hidden md:flex space-x-8">
-          <Link href="/documents" className="hover:opacity-80 text-white">Documents</Link>
-          <Link href="/features" className="hover:opacity-80 text-white">Features</Link>
-          <Link href="/pricing" className="hover:opacity-80 text-white">Pricing</Link>
+          {['Documents', 'Features', 'Pricing'].map((item) => (
+            <motion.div key={item} whileHover={{ scale: 1.05 }}>
+              <Link 
+                href={`/${item.toLowerCase()}`} 
+                className="relative group"
+              >
+                {item}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </motion.div>
+          ))}
         </div>
         
-        <button className="bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition-colors">
-          SIgnin
-        </button>
-      </nav>
+        {/* Enhanced Button */}
+        <motion.button 
+          className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-2 rounded-xl shadow-[0_4px_12px_rgba(251,191,36,0.3)] border border-amber-200 backdrop-blur-sm"
+          whileHover={{ 
+            scale: 1.03,
+            boxShadow: "0 10px 25px rgba(251,191,36,0.5)",
+          }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span className="flex items-center">
+            <Link href="/signin">Sign In</Link>
+            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </span>
+        </motion.button>
+      </motion.nav>
 
-      {/* Hero Section with SVG Placeholder and Gray Mask */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 text-center">
-        {/* Gray mask over the background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-rose-100 to-pink-400 opacity-80"></div>
-        
-        {/* Main SVG Image */}
-        <div className="pt-16 relative z-10 min-h-screen min-w-screen flex items-center justify-center">
-          <div className="p-4 rounded-lg h-screen w-screen">
-            <Image
-              width={800}
-              height={600}
-              src="/land-page.svg" 
-              alt="Landing Page Illustration"
-              className="w-full h-full object-contain rounded-lg"
-            />
-          </div>
-        </div>
-
-        {/* Features Bento Grid Section */}
-        <div className="relative z-10 py-24 px-4 md:px-6 max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Design Smarter, Not Harder</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Unlock premium components, templates, and resources to elevate your projects effortlessly.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Design Faster Than Ever</h3>
-              <p className="text-gray-600 dark:text-gray-300">Streamlined resources for efficient and seamless workflows.</p>
-              <div className="mt-4 relative">
-                <div className="absolute -right-4 bottom-0 transform translate-y-6">
-                  <Image 
-                    src="/placeholder-template.png" 
-                    width={140} 
-                    height={100} 
-                    alt="Design templates"
-                    className="rounded-lg shadow-lg"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            {/* Card 2 */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Fresh Updates Regularly</h3>
-              <p className="text-gray-600 dark:text-gray-300">Stay current with new design tools and resources.</p>
-              <div className="mt-6 flex justify-end">
-                <div className="bg-green-100 rounded-full p-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
-            {/* Card 3 */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm md:col-span-2 lg:col-span-1">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Professional Templates</h3>
-              <p className="text-gray-600 dark:text-gray-300">Use beautiful website templates made for Figma and Framer.</p>
-              <div className="mt-4 flex justify-center">
-                <Image 
-                  src="/placeholder-website.png" 
-                  width={220} 
-                  height={140} 
-                  alt="Website templates"
-                  className="rounded-lg shadow-lg"
-                />
-              </div>
-            </div>
-            
-            {/* Card 4 */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Customizable UI Kits</h3>
-              <p className="text-gray-600 dark:text-gray-300">Tailored templates to jumpstart any SaaS or business project.</p>
-              <div className="mt-4 flex justify-end">
-                <Image 
-                  src="/placeholder-ui.png" 
-                  width={160} 
-                  height={120} 
-                  alt="UI Kit preview"
-                  className="rounded-lg shadow-lg"
-                />
-              </div>
-            </div>
-            
-            {/* Card 5 */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Exclusive Gradient Library</h3>
-              <p className="text-gray-600 dark:text-gray-300">Discover unique color gradients for a professional look.</p>
-              <div className="mt-4 flex justify-center">
-                <div className="h-32 w-32 rounded-lg bg-gradient-to-br from-pink-400 to-purple-600 shadow-md"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Spacer + Scroll Indicator */}
+      <div className="flex-grow flex flex-col items-center justify-center">
+        <motion.div 
+          className="absolute bottom-20 left-1/2 transform -translate-x-1/2"
+          style={{ opacity, scale }}
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </motion.div>
       </div>
+      
+      {/* Hero Content - Enhanced */}
+      <motion.div 
+        className="relative z-20 w-full px-4 py-16 text-center"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.div 
+          className="max-w-4xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/30 shadow-xl"
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div 
+            className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-1 rounded-full text-xs text-white font-medium"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            LAUNCH FASTER
+          </motion.div>
+          
+          <motion.h1 
+            className="text-5xl md:text-7xl font-bold mb-6 mt-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 leading-tight"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            Launch Your SaaS in Days, 
+            <span className="text-white">Not Months</span>
+          </motion.h1>
+          
+          <motion.p 
+            className="text-lg md:text-xl mb-10 text-white/90 leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            A modern, TypeScript-first starter kit with Auth.js, Resend for emails, 
+            DodoPayments, and PostgreSQL with Prisma ORM — deploy in minutes. 
+            Focus on building your app, not the boilerplate.
+          </motion.p>
+          
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+          >
+            <motion.button 
+              className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-8 py-4 rounded-xl hover:from-amber-600 hover:to-amber-700 border border-amber-200 shadow-[0_8px_30px_rgba(251,191,36,0.4)] backdrop-blur-sm w-full sm:w-auto"
+              whileHover={{ 
+                scale: 1.05, 
+                boxShadow: "0 15px 30px rgba(251,191,36,0.6)"
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="flex items-center justify-center">
+                <span className="font-bold">Get Started</span>
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </span>
+            </motion.button>
+            
+            <motion.a
+              href="https://github.com"
+              className="flex items-center justify-center px-8 py-4 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 transition-colors duration-300 w-full sm:w-auto"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span>View on GitHub</span>
+            </motion.a>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
