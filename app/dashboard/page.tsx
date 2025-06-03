@@ -1,6 +1,6 @@
 "use client";
-
 import React from 'react';
+import SignOutButton from '@/components/auth/signoutButton';
 import { 
   BarChart2, 
   TrendingUp, 
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { auth } from '@/lib/auth/auth';
 
 // Same configuration as in sidebar.tsx for consistency
 const APP_CONFIG = {
@@ -49,6 +50,7 @@ const DASHBOARD_DATA = {
 };
 
 export default function Dashboard() {
+  
   // Helper function to get color classes based on color name
   const getColorClasses = (colorName: string, type: string) => {
     const colorMap: Record<string, Record<string, string>> = {
@@ -104,14 +106,20 @@ export default function Dashboard() {
 
   return (
     <div className="rounded-lg space-y-8 p-4 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      {/* Header with Sign Out Button */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-8"
+        className="mb-8 flex justify-between items-start"
       >
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome to {APP_CONFIG.name}</h1>
-        <p className="text-gray-600">{APP_CONFIG.description}</p>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome to {APP_CONFIG.name}</h1>
+          <p className="text-gray-600">{APP_CONFIG.description}</p>
+        </div>
+        <div className="flex-shrink-0 ml-4">
+          <SignOutButton />
+        </div>
       </motion.div>
       
       {/* Stats overview */}
