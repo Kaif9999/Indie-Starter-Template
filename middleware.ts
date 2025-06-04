@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
 	const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
 		baseURL: request.nextUrl.origin,
 		headers: {
-			cookie: request.headers.get("cookie") || "", // Forward the cookies from the request
+			cookie: request.headers.get("cookie") || "",
 		},
 	});
  
@@ -20,5 +20,5 @@ export async function middleware(request: NextRequest) {
 }
  
 export const config = {
-	matcher: ["/dashboard"], // Apply middleware to specific routes
+	matcher: ["/dashboard"],
 };
