@@ -17,7 +17,6 @@ const LandingPage: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   return (
     <div className="flex flex-col min-h-screen relative">
       {/* Background Elements */}
@@ -75,7 +74,7 @@ const LandingPage: React.FC = () => {
         </motion.div>
         
         <div className="hidden md:flex space-x-8">
-          {['Documents', 'Features', 'Pricing'].map((item) => (
+          {['Documents', 'Features', 'Pricing', 'Waitlist'].map((item) => (
             <motion.div key={item} whileHover={{ scale: 1.05 }}>
               <Link 
                 href={`/${item.toLowerCase()}`} 
