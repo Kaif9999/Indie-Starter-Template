@@ -18,7 +18,7 @@ export const plans = [
                 : "",
         price: 10,
         duration: "/month",
-    },
+    },   
     {
         link:
             process.env.NODE_ENV === "development"
@@ -355,4 +355,3 @@ export default function Pricing() {
         </div>
     )
 }
-
